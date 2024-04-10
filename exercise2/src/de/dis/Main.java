@@ -1,6 +1,7 @@
 package de.dis;
 
 import java.sql.ResultSet;
+import java.util.Objects;
 
 import de.dis.data.Makler;
 
@@ -61,13 +62,20 @@ public class Main {
 		final int BACK = 1;
 		final int DELETE_MAKLER = 2;
 		final int CHANGE_MAKLER = 3;
+		final String PASSWORD = "dis24";
 		
 		//Maklerverwaltungsmenü
 		Menu maklerMenu = new Menu("Makler-Verwaltung");
+		if (!Objects.equals(FormUtil.readString("Password"), PASSWORD)) {
+			System.out.println("wrong Password");
+			System.exit(0);
+		}
 		maklerMenu.addEntry("Neuer Makler", NEW_MAKLER);
 		maklerMenu.addEntry("Delete Makler", DELETE_MAKLER);
 		maklerMenu.addEntry("Change Makler", CHANGE_MAKLER);
 		maklerMenu.addEntry("Zurück zum Hauptmenü", BACK);
+
+
 		
 		//Verarbeite Eingabe
 		while(true) {
