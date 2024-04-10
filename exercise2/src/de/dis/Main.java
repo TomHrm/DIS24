@@ -42,7 +42,6 @@ public class Main {
 				break;
 			case QUIT:
 				return;
-				break;
 			case MENU_ESTATES:
 				showEstateMenu();
 				break;
@@ -94,14 +93,14 @@ public class Main {
 	 * Zeigt das Immobilienverwaltungsmenü
 	 */
 	public static void showEstateMenu() {
-
+		Menu estateMenu = new Menu("Estate-Verwaltung");
 	}
 
 	/**
 	 * Zeigt das Vertragsverwaltungsmenü
 	 */
 	public static void showContractMenu() {
-
+		Menu contracteMenu = new Menu("Contract-Verwaltung");
 	}
 	
 	/**
