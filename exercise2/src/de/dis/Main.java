@@ -1,5 +1,7 @@
 package de.dis;
 
+import java.sql.ResultSet;
+
 import de.dis.data.Makler;
 
 /**
@@ -20,10 +22,14 @@ public class Main {
 		//Menüoptionen
 		final int MENU_MAKLER = 0;
 		final int QUIT = 1;
+		final int MENU_ESTATES = 2;
+		final int MENU_CONTRACTS = 3;
 		
 		//Erzeuge Menü
 		Menu mainMenu = new Menu("Hauptmenü");
 		mainMenu.addEntry("Makler-Verwaltung", MENU_MAKLER);
+		mainMenu.addEntry("Immobilien-Verwaltung", MENU_ESTATES);
+		mainMenu.addEntry("Vertrags-Verwaltung", MENU_CONTRACTS);
 		mainMenu.addEntry("Beenden", QUIT);
 		
 		//Verarbeite Eingabe
@@ -31,11 +37,18 @@ public class Main {
 			int response = mainMenu.show();
 			
 			switch(response) {
-				case MENU_MAKLER:
-					showMaklerMenu();
-					break;
-				case QUIT:
-					return;
+			case MENU_MAKLER:
+				showMaklerMenu();
+				break;
+			case QUIT:
+				return;
+				break;
+			case MENU_ESTATES:
+				showEstateMenu();
+				break;
+			case MENU_CONTRACTS:
+				showContractMenu();
+				break;
 			}
 		}
 	}
@@ -76,6 +89,20 @@ public class Main {
 			}
 		}
 	}
+
+	/**
+	 * Zeigt das Immobilienverwaltungsmenü
+	 */
+	public static void showEstateMenu() {
+
+	}
+
+	/**
+	 * Zeigt das Vertragsverwaltungsmenü
+	 */
+	public static void showContractMenu() {
+
+	}
 	
 	/**
 	 * Legt einen neuen Makler an, nachdem der Benutzer
@@ -94,7 +121,6 @@ public class Main {
 	}
 
 	public static void deleteMakler() {
-		// get makler by id
 		int id = FormUtil.readInt("Makler ID");
 		Makler m = Makler.load(id);
 		m.delete();
