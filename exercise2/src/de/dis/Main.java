@@ -1,8 +1,8 @@
 package de.dis;
 
-import java.sql.ResultSet;
 import java.util.Objects;
 
+import de.dis.data.Estate;
 import de.dis.data.Makler;
 
 /**
@@ -101,7 +101,56 @@ public class Main {
 	 * Zeigt das Immobilienverwaltungsmenü
 	 */
 	public static void showEstateMenu() {
+		final int NEW_ESTATE = 0;
+		final int DELETE_ESTATE = 1;
+		final int CHANGE_ESTATE = 2;
+		final int BACK = 3;
+
 		Menu estateMenu = new Menu("Estate-Verwaltung");
+		Estate e = new Estate(FormUtil.readString("EsateId"));
+		// check if username exists
+		Makler m = null;
+		try {
+			m = Makler.load(Integer.parseInt("MarklerID"));
+			if(m.getId() != estateid) {
+				System.out.println("Esate Manager does not match the Makler");
+				System.exit(0);
+			}
+		} catch (Exception e) {
+			System.out.println("Username does not exist" + e);
+			System.exit(0);
+		}
+		String Password = FormUtil.readString("Password");
+		try {
+			if (m.getPassword() == Password) {
+				System.out.println("Wrong Password");
+				System.exit(0);
+			}
+		} catch (Exception e) {
+				System.out.println("Password is incorrect" + e);
+				System.exit(0);
+		}
+		estateMenu.addEntry("Neue Immobilie", 0);
+		estateMenu.addEntry("Immobilie löschen", 1);
+		estateMenu.addEntry("Immobilie ändern", 2);
+		estateMenu.addEntry("Zurück zum Hauptmenü", 3);
+
+		//Verarbeite Eingabe
+		while(true) {
+			int response = estateMenu.show();
+
+			switch(response) {
+			case NEW_ESTATE:
+				createEstate();
+				break;
+			case DELETE_ESTATE:
+				deleteEstate();
+				break;
+			case CHANGE_ESTATE:
+				changeEstate();
+				break;
+			}
+		}
 	}
 
 	/**
@@ -137,11 +186,51 @@ public class Main {
 	public static void changeMakler() {
 		int id = FormUtil.readInt("Makler ID");
 		Makler m = Makler.load(id);
-		m.setName(FormUtil.readString("Name"));
-		m.setAddress(FormUtil.readString("Adresse"));
-		m.setLogin(FormUtil.readString("Login"));
-		m.setPassword(FormUtil.readString("Passwort"));
+		m.setName(FormUtil.readString("Name:" + m.getName()));
+		m.setAddress(FormUtil.readString("Adresse:" + m.getAddress()));
+		m.setLogin(FormUtil.readString("Login:" + m.getLogin()));
+		m.setPassword(FormUtil.readString("Passwort:" + m.getPassword()));
 		m.save();
 		System.out.println("Makler wurde geändert.");
+	}
+
+	public static void createEstate() {
+		Estate e = new Estate();
+		e.setMaklerId(FormUtil.readInt("Makler ID"));
+		e.setCity(FormUtil.readString("Stadt"));
+		e.setPostalCode(FormUtil.readString("PLZ"));
+		e.setStreet(FormUtil.readString("Straße"));
+		e.setStreetNumber(FormUtil.readString("Hausnummer"));
+		e.setSquareArea(FormUtil.readInt("Quadratmeter"));
+		e.setPrice(Double.parseDouble(FormUtil.readString("Preis")));
+		e.setGarden(Boolean.parseBoolean(FormUtil.readString("Garten")));
+		e.setBalcony(Boolean.parseBoolean(FormUtil.readString("Balkon")));
+		e.setBuiltInKitchen(Boolean.parseBoolean(FormUtil.readString("Einbauküche")));
+		e.save();
+		System.out.println("Immobilie mit der ID "+e.getId()+" wurde erzeugt.");
+	}
+
+	public static void deleteEstate() {
+		int id = FormUtil.readInt("Immobilien ID");
+		Estate e = Estate.load(id);
+		e.delete();
+		System.out.println("Immobilie wurde gelöscht.");
+	}
+
+	public static void changeEstate() {
+		int id = FormUtil.readInt("Immobilien ID");
+		Estate e = Estate.load(id);
+		e.setMaklerId(FormUtil.readInt("Makler ID:" + e.getMaklerId()));
+		e.setCity(FormUtil.readString("Stadt:" + e.getCity()));
+		e.setPostalCode(FormUtil.readString("PLZ:" + e.getPostalCode()));
+		e.setStreet(FormUtil.readString("Straße:" + e.getStreet()));
+		e.setStreetNumber(FormUtil.readString("Hausnummer:" + e.getStreetNumber()));
+		e.setSquareArea(FormUtil.readInt("Quadratmeter:" + e.getSquareArea()));
+		e.setPrice(Double.parseDouble(FormUtil.readString("Preis" + e.getPrice())));
+		e.setGarden(Boolean.parseBoolean(FormUtil.readString("Garten" + e.isGarden())));
+		e.setBalcony(Boolean.parseBoolean(FormUtil.readString("Balkon" + e.isBalcony())));
+		e.setBuiltInKitchen(Boolean.parseBoolean(FormUtil.readString("Einbauküche" + e.isBuiltInKitchen())));
+		e.save();
+		System.out.println("Immobilie wurde geändert.");
 	}
 }

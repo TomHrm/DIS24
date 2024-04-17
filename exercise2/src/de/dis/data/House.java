@@ -6,137 +6,43 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Makler-Bean
- *
- * Beispiel-Tabelle:
- * CREATE TABLE makler (
- * name varchar(255),
- * address varchar(255),
- * login varchar(40) UNIQUE,
- * password varchar(40),
- * id serial primary key);
- */
-public class Estate {
-	private int estateId = -1;
-	private String name;
-	private String agent_id;
-	private String postalCode;
-	private String city;
-	private String street;
-	private String streetNumber;
-	private int squareArea;
+public class House extends Estate {
+
+	private int floors;
 	private double price;
 	private boolean garden;
-	private boolean balcony;
-	private boolean builtInKitchen;
 
-	public int getId() {
-		return estateId;
+	public int getFloors(){
+		return floors;
 	}
 
-	public void setId(int id) {
-		this.estateId = id;
+	public void setFloors(int floors){
+		this.floors = floors;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setMaklerId(int id) {
-		this.estateId = id;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreetNumber(String streetNumber) {
-		this.streetNumber = streetNumber;
-	}
-
-	public String getStreetNumber() {
-		return streetNumber;
-	}
-
-	public void setSquareArea(int squareArea) {
-		this.squareArea = squareArea;
-	}
-
-	public int getSquareArea() {
-		return squareArea;
+	public double getPrice(){
+		return price;
 	}
 
 	public void setPrice(double price) {
 		this.price = price;
 	}
 
-	public double getPrice() {
-		return price;
+	public boolean getGarden(){
+		return garden;
 	}
-
-	public void setGarden(boolean garden) {
+	public void setGarden(boolean garden){
 		this.garden = garden;
 	}
 
-	public boolean isGarden() {
-		return garden;
-	}
-
-	public void setBalcony(boolean balcony) {
-		this.balcony = balcony;
-	}
-
-	public boolean isBalcony() {
-		return balcony;
-	}
-
-	public void setBuiltInKitchen(boolean builtInKitchen) {
-		this.builtInKitchen = builtInKitchen;
-	}
-
-	public boolean isBuiltInKitchen() {
-		return builtInKitchen;
-	}
-
-	public void setAgent_id(String MarklerId) {
-		this.agent_id = MarklerId;
-	}
-
-	public String getAgent_id() {
-		return agent_id;
-	}
-
-	public void delete() {
+	public void deleteHouse() {
 		// Hole Verbindung
 		Connection con = DbConnectionManager.getInstance().getConnection();
 
 		try {
-			String deleteSQL = "DELETE FROM estate WHERE agent_id = ?";
+			delete();
+
+			String deleteSQL = "DELETE FROM houses WHERE houses = ?";
 			PreparedStatement pstmt = con.prepareStatement(deleteSQL);
 			pstmt.setInt(1, getId());
 
@@ -239,4 +145,5 @@ public class Estate {
 			e.printStackTrace();
 		}
 	}
+
 }
