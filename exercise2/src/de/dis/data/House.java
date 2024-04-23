@@ -65,7 +65,7 @@ public class House extends Estate {
 	 * @param houseId ID des zu ladenden Maklers
 	 * @return Makler-Instanz
 	 */
-	public static Estate load(int houseId) {
+	public static House load(int houseId) {
 		try {
 			// Hole Verbindung
 			Connection con = DbConnectionManager.getInstance().getConnection();
@@ -80,12 +80,11 @@ public class House extends Estate {
 			if (rs.next()) {
 				House house = new House();
 				house.setId(houseId);
-				house.setName(rs.getString("name"));
 				house.setAgent_id(rs.getInt("agent_id"));
 				house.setPostalCode(rs.getString("postal_code"));
 				house.setCity(rs.getString("city"));
 				house.setStreet(rs.getString("street"));
-				house.setStreetNumber(rs.getString("street_number"));
+				house.setStreetNumber(rs.getInt("street_number"));
 				house.setFloors(rs.getInt("floors"));
 				house.setPrice(rs.getDouble("price"));
 				house.setGarden(rs.getBoolean("garden"));
@@ -115,19 +114,18 @@ public class House extends Estate {
 			if (getId() == -1) {
 				// Achtung, hier wird noch ein Parameter mitgegeben,
 				// damit spC$ter generierte IDs zurC<ckgeliefert werden!
-				String insertSQL = "INSERT INTO estates(name, agent_id, postal_code, city, street, street_number, square_area) VALUES (?, ?, ?, ?, ?, ?, ?)";
+				String insertSQL = "INSERT INTO estates(agent_id, postal_code, city, street, street_number, square_area) VALUES (?, ?, ?, ?, ?,?)";
 
 				PreparedStatement pstmt = con.prepareStatement(insertSQL,
 					Statement.RETURN_GENERATED_KEYS);
 
 				// Setze Anfrageparameter und fC<hre Anfrage aus
-				pstmt.setString(1, getName());
-				pstmt.setInt(2, getAgent_id());
-				pstmt.setString(3, getPostalCode());
-				pstmt.setString(4, getCity());
-				pstmt.setString(5, getStreet());
-				pstmt.setString(6, getStreetNumber());
-				pstmt.setInt(7, getSquareArea());
+				pstmt.setInt(1, getAgent_id());
+				pstmt.setString(2, getPostalCode());
+				pstmt.setString(3, getCity());
+				pstmt.setString(4, getStreet());
+				pstmt.setInt(5, getStreetNumber());
+				pstmt.setInt(6, getSquareArea());
 				pstmt.executeUpdate();
 				// Hole die Id des engefC<gten Datensatzes
 				ResultSet rs = pstmt.getGeneratedKeys();
@@ -137,7 +135,7 @@ public class House extends Estate {
 				rs.close();
 				pstmt.close();
 
-				String insertSQLHouse = "INSERT INTO estates(estate_id, floors, price, garden) VALUES (?, ?, ?, ?)";
+				String insertSQLHouse = "INSERT INTO houses(estate_id, floors, price, garden) VALUES (?, ?, ?, ?)";
 
 				PreparedStatement pstmtHouse = con.prepareStatement(insertSQLHouse,
 						Statement.RETURN_GENERATED_KEYS);
@@ -153,23 +151,22 @@ public class House extends Estate {
 				pstmt.close();
 			} else {
 				// Falls schon eine ID vorhanden ist, mache ein Update...
-				String updateSQL = "UPDATE estates SET name = ?, agent_id = ?, postal_code = ?, city = ?, street = ?, street_number = ?, square_area = ? WHERE estate_id = ?";
+				String updateSQL = "UPDATE estates SET agent_id = ?, postal_code = ?, city = ?, street = ?, street_number = ?, square_area = ? WHERE estate_id = ?";
 				PreparedStatement pstmt = con.prepareStatement(updateSQL);
 
 				// Setze Anfrage Parameter
-				pstmt.setString(1, getName());
-				pstmt.setInt(2, getAgent_id());
-				pstmt.setString(3, getPostalCode());
-				pstmt.setString(4, getCity());
-				pstmt.setString(5, getStreet());
-				pstmt.setString(6, getStreetNumber());
-				pstmt.setInt(7, getSquareArea());
-				pstmt.setInt(8, getId());
+				pstmt.setInt(1, getAgent_id());
+				pstmt.setString(2, getPostalCode());
+				pstmt.setString(3, getCity());
+				pstmt.setString(4, getStreet());
+				pstmt.setInt(5, getStreetNumber());
+				pstmt.setInt(6, getSquareArea());
+				pstmt.setInt(7, getId());
 				pstmt.executeUpdate();
 
 				pstmt.close();
 
-				String updateSQLHouse = "UPDATE estates SET floors = ?, price = ?, garden = ? WHERE estate_id = ?";
+				String updateSQLHouse = "UPDATE houses SET floors = ?, price = ?, garden = ? WHERE estate_id = ?";
 				PreparedStatement pstmtHouse = con.prepareStatement(updateSQLHouse);
 
 				// Setze Anfrage Parameter

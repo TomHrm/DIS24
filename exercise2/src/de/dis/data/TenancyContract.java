@@ -1,7 +1,10 @@
 package de.dis.data;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class TenancyContract extends Contract {
 
@@ -87,7 +90,7 @@ public class TenancyContract extends Contract {
             Connection con = DbConnectionManager.getInstance().getConnection();
 
             // Erzeuge Anfrage
-            String selectSQL = "SELECT * FROM tenancy_contracts JOIN contracts ON tenancy_contracts.contract_no = contracts.estates_id WHERE estate_id = ?";
+            String selectSQL = "SELECT * FROM tenancy_contracts JOIN contracts ON tenancy_contracts.contract_no = contracts.contract_no WHERE tenancy_contracts.contract_no = ?";
             PreparedStatement pstmt = con.prepareStatement(selectSQL);
             pstmt.setString(1, contractNo);
 
@@ -114,6 +117,52 @@ public class TenancyContract extends Contract {
         return null;
     }
 
+    public static ArrayList<TenancyContract> loadAll(String contractNo) {
+        try {
+            // Hole Verbindung
+            Connection con = DbConnectionManager.getInstance().getConnection();
+
+            // Erzeuge Anfrage
+            String selectSQL = "SELECT * FROM tenancy_contracts JOIN contracts ON tenancy_contracts.contract_no = contracts.estates_id";
+            PreparedStatement pstmt = con.prepareStatement(selectSQL);
+
+            // Führe Anfrage aus
+            ResultSet rs = pstmt.executeQuery();
+
+            ArrayList<TenancyContract> tenancyContracts = new ArrayList<TenancyContract>();
+            while(rs.next()) {
+
+                TenancyContract tenancyContract = new TenancyContract();
+                tenancyContract.setContractNo(contractNo);
+                tenancyContract.setDate(rs.getDate("date"));
+                tenancyContract.setPlace(rs.getString("place"));
+                tenancyContract.setStartDate(rs.getDate("start_date"));
+                tenancyContract.setDuration(rs.getInt("duration"));
+                tenancyContract.setAdditionalCosts(rs.getDouble("additional_costs"));
+                tenancyContract.setEstate_id(rs.getInt("estate_id"));
+                tenancyContract.setPerson_id(rs.getInt("person_id"));
+                tenancyContracts.add(tenancyContract);
+
+            }
+            rs.close();
+            pstmt.close();
+            return tenancyContracts;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "TenancyContract{" +
+                "startDate=" + startDate +
+                ", duration=" + duration +
+                ", additionalCosts=" + additionalCosts +
+                ", estate_id=" + estate_id +
+                ", person_id=" + person_id +
+                '}';
+    }
 
     // TODO:
     /**
@@ -126,17 +175,20 @@ public class TenancyContract extends Contract {
 
         try {
             // FC<ge neues Element hinzu, wenn das Objekt noch keine ID hat.
-            if (Objects.equals(getContractNo(), "")) {
+            if (Objects.equals(getContractNo(), "-1")) {
                 // Achtung, hier wird noch ein Parameter mitgegeben,
                 // damit spC$ter generierte IDs zurC<ckgeliefert werden!
-                String insertSQL = "INSERT INTO contract(date, place) VALUES (?, ?)";
+                UUID uuid = UUID.randomUUID();
+                setContractNo(uuid.toString());
+                String insertSQL = "INSERT INTO contracts(contract_no, date, place) VALUES (?, ?, ?)";
 
                 PreparedStatement pstmt = con.prepareStatement(insertSQL,
                         Statement.RETURN_GENERATED_KEYS);
 
                 // Setze Anfrageparameter und fC<hre Anfrage aus
-                pstmt.setDate(1, getDate());
-                pstmt.setString(2, getPlace());
+                pstmt.setString(1, getContractNo());
+                pstmt.setDate(2, getDate());
+                pstmt.setString(3, getPlace());
 
                 pstmt.executeUpdate();
                 // Hole die Id des engefC<gten Datensatzes
@@ -147,7 +199,7 @@ public class TenancyContract extends Contract {
                 rs.close();
                 pstmt.close();
 
-                String insertSQLHouse = "INSERT INTO tenancy_contract(contract_no, start_date, duration, additional_costs, person_id, estate_id) VALUES (?, ?, ?, ?, ?, ?)";
+                String insertSQLHouse = "INSERT INTO tenancy_contracts(contract_no, start_date, duration, additional_costs, person_id, estate_id) VALUES (?, ?, ?, ?, ?, ?)";
 
                 PreparedStatement pstmtTenancyContract = con.prepareStatement(insertSQLHouse,
                         Statement.RETURN_GENERATED_KEYS);

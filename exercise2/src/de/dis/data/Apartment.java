@@ -99,12 +99,11 @@ public class Apartment extends Estate {
 			if (rs.next()) {
 				Apartment apartment = new Apartment();
 				apartment.setId(apartmentId);
-				apartment.setName(rs.getString("name"));
 				apartment.setAgent_id(rs.getInt("agent_id"));
 				apartment.setPostalCode(rs.getString("postal_code"));
 				apartment.setCity(rs.getString("city"));
 				apartment.setStreet(rs.getString("street"));
-				apartment.setStreetNumber(rs.getString("street_number"));
+				apartment.setStreetNumber(rs.getInt("street_number"));
 				apartment.setFloor(rs.getInt("floor"));
 				apartment.setRent(rs.getDouble("rent"));
 				apartment.setRooms(rs.getInt("rooms"));
@@ -136,29 +135,29 @@ public class Apartment extends Estate {
 			if (getId() == -1) {
 				// Achtung, hier wird noch ein Parameter mitgegeben,
 				// damit spC$ter generierte IDs zurC<ckgeliefert werden!
-				String insertSQL = "INSERT INTO estates(name, agent_id, postal_code, city, street, street_number, square_area) VALUES (?, ?, ?, ?, ?, ?, ?)";
+				String insertSQL = "INSERT INTO estates(agent_id, postal_code, city, street, street_number, square_area) VALUES (?, ?, ?, ?, ?, ?)";
 
 				PreparedStatement pstmt = con.prepareStatement(insertSQL,
 						Statement.RETURN_GENERATED_KEYS);
 
 				// Setze Anfrageparameter und fC<hre Anfrage aus
-				pstmt.setString(1, getName());
-				pstmt.setInt(2, getAgent_id());
-				pstmt.setString(3, getPostalCode());
-				pstmt.setString(4, getCity());
-				pstmt.setString(5, getStreet());
-				pstmt.setString(6, getStreetNumber());
-				pstmt.setInt(7, getSquareArea());
+				pstmt.setInt(1, getAgent_id());
+				pstmt.setString(2, getPostalCode());
+				pstmt.setString(3, getCity());
+				pstmt.setString(4, getStreet());
+				pstmt.setInt(5, getStreetNumber());
+				pstmt.setInt(6, getSquareArea());
 				pstmt.executeUpdate();
 				// Hole die Id des engefC<gten Datensatzes
 				ResultSet rs = pstmt.getGeneratedKeys();
 				if (rs.next()) {
 					setId(rs.getInt(1));
 				}
+				System.out.println("HERE");
 				rs.close();
 				pstmt.close();
 
-				String insertSQLApartment = "INSERT INTO estates(estate_id, floor, rent, rooms, balcony, build_in_kitchen) VALUES (?, ?, ?, ?, ?, ?)";
+				String insertSQLApartment = "INSERT INTO apartments(estate_id, floor, rent, rooms, balcony, built_in_kitchen) VALUES (?, ?, ?, ?, ?, ?)";
 
 				PreparedStatement pstmtApartment = con.prepareStatement(insertSQLApartment,
 						Statement.RETURN_GENERATED_KEYS);
@@ -176,26 +175,26 @@ public class Apartment extends Estate {
 				pstmt.close();
 			} else {
 				// Falls schon eine ID vorhanden ist, mache ein Update...
-				String updateSQL = "UPDATE estates SET name = ?, agent_id = ?, postal_code = ?, city = ?, street = ?, street_number = ?, square_area = ? WHERE estate_id = ?";
+				String updateSQL = "UPDATE estates SET agent_id = ?, postal_code = ?, city = ?, street = ?, street_number = ?, square_area = ? WHERE estate_id = ?";
 				PreparedStatement pstmt = con.prepareStatement(updateSQL);
 
 				// Setze Anfrage Parameter
-				pstmt.setString(1, getName());
-				pstmt.setInt(2, getAgent_id());
-				pstmt.setString(3, getPostalCode());
-				pstmt.setString(4, getCity());
-				pstmt.setString(5, getStreet());
-				pstmt.setString(6, getStreetNumber());
-				pstmt.setInt(7, getSquareArea());
-				pstmt.setInt(8, getId());
+				pstmt.setInt(1, getAgent_id());
+				pstmt.setString(2, getPostalCode());
+				pstmt.setString(3, getCity());
+				pstmt.setString(4, getStreet());
+				pstmt.setInt(5, getStreetNumber());
+				pstmt.setInt(6, getSquareArea());
+				pstmt.setInt(7, getId());
 				pstmt.executeUpdate();
 
 				pstmt.close();
 
-				String updateSQLApartment = "UPDATE estates SET estate_id = ?, floor = ?, rent = ?, rooms = ?, balcony = ?, build_in_kitchen = ? WHERE estate_id = ?";
+				String updateSQLApartment = "UPDATE apartments SET estate_id = ?, floor = ?, rent = ?, rooms = ?, balcony = ?, built_in_kitchen = ? WHERE estate_id = ?";
 				PreparedStatement pstmtApartment = con.prepareStatement(updateSQLApartment);
 
 				// Setze Anfrage Parameter
+				pstmtApartment.setInt(1, getId());
 				pstmtApartment.setInt(2, getFloor());
 				pstmtApartment.setDouble(3, getRent());
 				pstmtApartment.setInt(4, getRooms());

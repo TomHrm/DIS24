@@ -19,12 +19,11 @@ import java.sql.Statement;
  */
 public class Estate {
 	private int estateId = -1;
-	private String name;
 	private int agent_id;
 	private String postalCode;
 	private String city;
 	private String street;
-	private String streetNumber;
+	private int streetNumber;
 	private int squareArea;
 
 	public int getId() {
@@ -33,12 +32,6 @@ public class Estate {
 
 	public void setId(int id) {
 		this.estateId = id;
-	}
-
-	public String getName() {return name;}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setPostalCode(String postalCode) {
@@ -65,11 +58,11 @@ public class Estate {
 		return street;
 	}
 
-	public void setStreetNumber(String streetNumber) {
+	public void setStreetNumber(int streetNumber) {
 		this.streetNumber = streetNumber;
 	}
 
-	public String getStreetNumber() {
+	public int getStreetNumber() {
 		return streetNumber;
 	}
 
@@ -129,12 +122,11 @@ public class Estate {
 			if (rs.next()) {
 				Estate es = new Estate();
 				es.setId(estateId);
-				es.setName(rs.getString("name"));
 				es.setAgent_id(rs.getInt("agent_id"));
 				es.setPostalCode(rs.getString("postal_code"));
 				es.setCity(rs.getString("city"));
 				es.setStreet(rs.getString("street"));
-				es.setStreetNumber(rs.getString("street_number"));
+				es.setStreetNumber(rs.getInt("street_number"));
 
 				rs.close();
 				pstmt.close();

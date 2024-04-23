@@ -2,6 +2,7 @@ package de.dis.data;
 
 import java.sql.*;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PurchaseContract extends Contract {
 
@@ -9,6 +10,16 @@ public class PurchaseContract extends Contract {
     private double interestRate;
     private int person_id;
     private int estate_id;
+
+    @Override
+    public String toString() {
+        return "PurchaseContract{" +
+                "noOfInstallments=" + noOfInstallments +
+                ", interestRate=" + interestRate +
+                ", person_id=" + person_id +
+                ", estate_id=" + estate_id +
+                '}';
+    }
 
     public int getNoOfInstallments() {
         return noOfInstallments;
@@ -78,7 +89,7 @@ public class PurchaseContract extends Contract {
             Connection con = DbConnectionManager.getInstance().getConnection();
 
             // Erzeuge Anfrage
-            String selectSQL = "SELECT * FROM purchase_contracts JOIN contracts ON purchase_contracts.contract_no = contracts.contract_no WHERE contract_no = ?";
+            String selectSQL = "SELECT * FROM purchase_contracts JOIN contracts ON purchase_contracts.contract_no = contracts.contract_no WHERE purchase_contracts.contract_no = ?";
             PreparedStatement pstmt = con.prepareStatement(selectSQL);
             pstmt.setString(1, contractNo);
 
@@ -116,17 +127,20 @@ public class PurchaseContract extends Contract {
 
         try {
             // FC<ge neues Element hinzu, wenn das Objekt noch keine ID hat.
-            if (Objects.equals(getContractNo(), "")) {
+            if (Objects.equals(getContractNo(), "-1")) {
                 // Achtung, hier wird noch ein Parameter mitgegeben,
                 // damit spC$ter generierte IDs zurC<ckgeliefert werden!
-                String insertSQL = "INSERT INTO contract(date, place) VALUES (?, ?)";
+                UUID uuid = UUID.randomUUID();
+                setContractNo(uuid.toString());
+                String insertSQL = "INSERT INTO contracts(contract_no, date, place) VALUES (?,?, ?)";
 
                 PreparedStatement pstmt = con.prepareStatement(insertSQL,
                         Statement.RETURN_GENERATED_KEYS);
 
                 // Setze Anfrageparameter und fC<hre Anfrage aus
-                pstmt.setDate(1, getDate());
-                pstmt.setString(2, getPlace());
+                pstmt.setString(1, getContractNo());
+                pstmt.setDate(2, getDate());
+                pstmt.setString(3, getPlace());
 
                 pstmt.executeUpdate();
                 // Hole die Id des engefC<gten Datensatzes
@@ -137,7 +151,7 @@ public class PurchaseContract extends Contract {
                 rs.close();
                 pstmt.close();
 
-                String insertSQLHouse = "INSERT INTO tenancy_contract(contract_no, no_of_installments, interst_rate, person_id, estate_id) VALUES (?, ?, ?, ?, ?)";
+                String insertSQLHouse = "INSERT INTO purchase_contracts(contract_no, no_of_installments, interest_rate, person_id, estate_id) VALUES (?, ?, ?, ?, ?)";
 
                 PreparedStatement pstmtPurchaseContract = con.prepareStatement(insertSQLHouse,
                         Statement.RETURN_GENERATED_KEYS);
@@ -165,7 +179,7 @@ public class PurchaseContract extends Contract {
 
                 pstmt.close();
 
-                String updateSQLHouse = "UPDATE tenancy_contracts SET no_of_installments = ?, interst_rate = ?, person_id = ?, estate_id = ? WHERE contract_no = ?";
+                String updateSQLHouse = "UPDATE purchase_contracts SET no_of_installments = ?, interst_rate = ?, person_id = ?, estate_id = ? WHERE contract_no = ?";
                 PreparedStatement pstmtHouse = con.prepareStatement(updateSQLHouse);
 
                 // Setze Anfrage Parameter

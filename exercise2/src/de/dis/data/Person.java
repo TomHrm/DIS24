@@ -112,7 +112,7 @@ public class Person {
             if (getPersonId() == -1) {
                 // Achtung, hier wird noch ein Parameter mitgegeben,
                 // damit spC$ter generierte IDs zurC<ckgeliefert werden!
-                String insertSQL = "INSERT INTO estates(first_name, name, address) VALUES (?, ?, ?)";
+                String insertSQL = "INSERT INTO persons(first_name, name, address) VALUES (?, ?, ?)";
 
                 PreparedStatement pstmt = con.prepareStatement(insertSQL,
                         Statement.RETURN_GENERATED_KEYS);

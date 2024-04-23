@@ -1,6 +1,5 @@
 package de.dis.data;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,7 +26,7 @@ public class DbConnectionManager {
 		try {
 			// Holen der Einstellungen aus der db.properties Datei
 			Properties properties = new Properties();
-			FileInputStream stream = new FileInputStream(new File("db.properties"));
+			FileInputStream stream = new FileInputStream("db.properties");
 			properties.load(stream);
 			stream.close();
 
@@ -36,6 +35,7 @@ public class DbConnectionManager {
 			String jdbcUrl = properties.getProperty("jdbc_url");
 			// Verbindung zur Datenbank herstellen
 			_con = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
+
 
 		}catch (Exception e){
 			e.printStackTrace();
