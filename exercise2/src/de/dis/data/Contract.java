@@ -1,18 +1,6 @@
 package de.dis.data;
 
 import java.sql.*;
-
-/**
- * Makler-Bean
- *
- * Beispiel-Tabelle:
- * CREATE TABLE makler (
- * name varchar(255),
- * address varchar(255),
- * login varchar(40) UNIQUE,
- * password varchar(40),
- * id serial primary key);
- */
 public class Contract {
     private String contractNo;
     private Date date;

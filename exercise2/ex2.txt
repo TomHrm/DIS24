@@ -1,0 +1,72 @@
+-- Estate Agents table
+CREATE TABLE estate_agents (
+                               agent_id SERIAL PRIMARY KEY,
+                               name VARCHAR(255),
+                               address VARCHAR(255),
+                               login VARCHAR(255) UNIQUE,
+                               password VARCHAR(255)
+);
+
+
+-- Estates table
+CREATE TABLE estates (
+                         estate_id SERIAL PRIMARY KEY,
+                         agent_id INTEGER REFERENCES estate_agents(agent_id),
+                         city VARCHAR(255),
+                         postal_code VARCHAR(255),
+                         street VARCHAR(255),
+                         street_number INTEGER,
+                         square_area NUMERIC(10,2)
+);
+
+-- Apartments table
+CREATE TABLE apartments (
+                            estate_id INTEGER PRIMARY KEY REFERENCES estates(estate_id),
+                            floor INTEGER,
+                            rent NUMERIC(10,2),
+                            rooms INTEGER,
+                            balcony BOOLEAN,
+                            built_in_kitchen BOOLEAN
+);
+
+-- Houses table
+CREATE TABLE houses (
+                        estate_id INTEGER PRIMARY KEY REFERENCES estates(estate_id),
+                        floors INTEGER,
+                        price NUMERIC(10,2),
+                        garden BOOLEAN
+);
+
+-- Persons table
+CREATE TABLE persons (
+                         person_id SERIAL PRIMARY KEY,
+                         first_name VARCHAR(255),
+                         name VARCHAR(255),
+                         address VARCHAR(255)
+);
+
+-- Contracts table, using contract_no as a unique identifier
+CREATE TABLE contracts (
+                           contract_no VARCHAR(255) PRIMARY KEY,
+                           date DATE,
+                           place VARCHAR(255)
+);
+
+-- Tenancy Contracts table
+CREATE TABLE tenancy_contracts (
+                                   contract_no VARCHAR(255) REFERENCES contracts(contract_no),
+                                   estate_id INTEGER REFERENCES apartments(estate_id),
+                                   person_id INTEGER REFERENCES persons(person_id),
+                                   start_date DATE,
+                                   duration INTEGER,
+                                   additional_costs NUMERIC(10,2)
+);
+
+-- Purchase Contracts table
+CREATE TABLE purchase_contracts (
+                                    contract_no VARCHAR(255) REFERENCES contracts(contract_no),
+                                    estate_id INTEGER REFERENCES houses(estate_id),
+                                    person_id INTEGER REFERENCES persons(person_id),
+                                    no_of_installments INTEGER,
+                                    interest_rate NUMERIC(5,2)
+);
