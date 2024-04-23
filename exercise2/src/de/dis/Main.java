@@ -3,7 +3,7 @@ package de.dis;
 import java.util.Objects;
 
 import de.dis.data.Estate;
-import de.dis.data.Makler;
+import de.dis.data.EstateAgent;
 
 /**
  * Hauptklasse
@@ -109,9 +109,9 @@ public class Main {
 		Menu estateMenu = new Menu("Estate-Verwaltung");
 		Estate e = new Estate(FormUtil.readString("EsateId"));
 		// check if username exists
-		Makler m = null;
+		EstateAgent m = null;
 		try {
-			m = Makler.load(Integer.parseInt("MarklerID"));
+			m = EstateAgent.load(Integer.parseInt("MarklerID"));
 			if(m.getId() != estateid) {
 				System.out.println("Esate Manager does not match the Makler");
 				System.exit(0);
@@ -165,7 +165,7 @@ public class Main {
 	 * die entprechenden Daten eingegeben hat.
 	 */
 	public static void newMakler() {
-		Makler m = new Makler();
+		EstateAgent m = new EstateAgent();
 		
 		m.setName(FormUtil.readString("Name"));
 		m.setAddress(FormUtil.readString("Adresse"));
@@ -178,14 +178,14 @@ public class Main {
 
 	public static void deleteMakler() {
 		int id = FormUtil.readInt("Makler ID");
-		Makler m = Makler.load(id);
+		EstateAgent m = EstateAgent.load(id);
 		m.delete();
 		System.out.println("Makler wurde gelöscht.");
 	}
 
 	public static void changeMakler() {
 		int id = FormUtil.readInt("Makler ID");
-		Makler m = Makler.load(id);
+		EstateAgent m = EstateAgent.load(id);
 		m.setName(FormUtil.readString("Name:" + m.getName()));
 		m.setAddress(FormUtil.readString("Adresse:" + m.getAddress()));
 		m.setLogin(FormUtil.readString("Login:" + m.getLogin()));

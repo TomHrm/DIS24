@@ -17,7 +17,7 @@ import java.sql.Statement;
  * password varchar(40), 
  * id serial primary key);
  */
-public class Makler {
+public class EstateAgent {
 	private int id = -1;
 	private String name;
 	private String address;
@@ -83,10 +83,10 @@ public class Makler {
 	
 	/**
 	 * Lädt einen Makler aus der Datenbank
-	 * @param id ID des zu ladenden Maklers
+	 * @param agent_id ID des zu ladenden Maklers
 	 * @return Makler-Instanz
 	 */
-	public static Makler load(int agent_id) {
+	public static EstateAgent load(int agent_id) {
 		try {
 			// Hole Verbindung
 			Connection con = DbConnectionManager.getInstance().getConnection();
@@ -99,7 +99,7 @@ public class Makler {
 			// Führe Anfrage aus
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
-				Makler ts = new Makler();
+				EstateAgent ts = new EstateAgent();
 				ts.setId(agent_id);
 				ts.setName(rs.getString("name"));
 				ts.setAddress(rs.getString("address"));

@@ -20,16 +20,12 @@ import java.sql.Statement;
 public class Estate {
 	private int estateId = -1;
 	private String name;
-	private String agent_id;
+	private int agent_id;
 	private String postalCode;
 	private String city;
 	private String street;
 	private String streetNumber;
 	private int squareArea;
-	private double price;
-	private boolean garden;
-	private boolean balcony;
-	private boolean builtInKitchen;
 
 	public int getId() {
 		return estateId;
@@ -39,16 +35,10 @@ public class Estate {
 		this.estateId = id;
 	}
 
-	public String getName() {
-		return name;
-	}
+	public String getName() {return name;}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public void setMaklerId(int id) {
-		this.estateId = id;
 	}
 
 	public void setPostalCode(String postalCode) {
@@ -91,43 +81,12 @@ public class Estate {
 		return squareArea;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
+
+	public void setAgent_id(int agent_id) {
+		this.agent_id = agent_id;
 	}
 
-	public double getPrice() {
-		return price;
-	}
-
-	public void setGarden(boolean garden) {
-		this.garden = garden;
-	}
-
-	public boolean isGarden() {
-		return garden;
-	}
-
-	public void setBalcony(boolean balcony) {
-		this.balcony = balcony;
-	}
-
-	public boolean isBalcony() {
-		return balcony;
-	}
-
-	public void setBuiltInKitchen(boolean builtInKitchen) {
-		this.builtInKitchen = builtInKitchen;
-	}
-
-	public boolean isBuiltInKitchen() {
-		return builtInKitchen;
-	}
-
-	public void setAgent_id(String MarklerId) {
-		this.agent_id = MarklerId;
-	}
-
-	public String getAgent_id() {
+	public int getAgent_id() {
 		return agent_id;
 	}
 
@@ -171,7 +130,7 @@ public class Estate {
 				Estate es = new Estate();
 				es.setId(estateId);
 				es.setName(rs.getString("name"));
-				es.setMaklerId(rs.getInt("agent_id"));
+				es.setAgent_id(rs.getInt("agent_id"));
 				es.setPostalCode(rs.getString("postal_code"));
 				es.setCity(rs.getString("city"));
 				es.setStreet(rs.getString("street"));
@@ -193,50 +152,50 @@ public class Estate {
 	 * Speichert den Makler in der Datenbank. Ist noch keine ID vergeben
 	 * worden, wird die generierte Id von der DB geholt und dem Model übergeben.
 	 */
-	public void save() {
-		// Hole Verbindung
-		Connection con = DbConnectionManager.getInstance().getConnection();
-
-		try {
-			// FC<ge neues Element hinzu, wenn das Objekt noch keine ID hat.
-			if (getId() == -1) {
-				// Achtung, hier wird noch ein Parameter mitgegeben,
-				// damit spC$ter generierte IDs zurC<ckgeliefert werden!
-				String insertSQL = "INSERT INTO estates(name, address, agent_id) VALUES (?, ?, ?, ?)";
-
-				PreparedStatement pstmt = con.prepareStatement(insertSQL,
-					Statement.RETURN_GENERATED_KEYS);
-
-				// Setze Anfrageparameter und fC<hre Anfrage aus
-				pstmt.setString(1, getName());
-
-				pstmt.executeUpdate();
-
-				// Hole die Id des engefC<gten Datensatzes
-				ResultSet rs = pstmt.getGeneratedKeys();
-				if (rs.next()) {
-					setId(rs.getInt(1));
-				}
-
-				rs.close();
-				pstmt.close();
-			} else {
-				// Falls schon eine ID vorhanden ist, mache ein Update...
-				String updateSQL = "UPDATE estate_agents SET name = ?, address = ?, login = ?, password = ? WHERE agent_id = ?";
-				PreparedStatement pstmt = con.prepareStatement(updateSQL);
-
-				// Setze Anfrage Parameter
-				pstmt.setString(1, getName());
-				pstmt.setString(2, getAddress());
-				pstmt.setString(3, getLogin());
-				pstmt.setString(4, getPassword());
-				pstmt.setInt(5, getId());
-				pstmt.executeUpdate();
-
-				pstmt.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void save() {
+//		// Hole Verbindung
+//		Connection con = DbConnectionManager.getInstance().getConnection();
+//
+//		try {
+//			// FC<ge neues Element hinzu, wenn das Objekt noch keine ID hat.
+//			if (getId() == -1) {
+//				// Achtung, hier wird noch ein Parameter mitgegeben,
+//				// damit spC$ter generierte IDs zurC<ckgeliefert werden!
+//				String insertSQL = "INSERT INTO estates(name, address, agent_id) VALUES (?, ?, ?, ?)";
+//
+//				PreparedStatement pstmt = con.prepareStatement(insertSQL,
+//					Statement.RETURN_GENERATED_KEYS);
+//
+//				// Setze Anfrageparameter und fC<hre Anfrage aus
+//				pstmt.setString(1, getName());
+//
+//				pstmt.executeUpdate();
+//
+//				// Hole die Id des engefC<gten Datensatzes
+//				ResultSet rs = pstmt.getGeneratedKeys();
+//				if (rs.next()) {
+//					setId(rs.getInt(1));
+//				}
+//
+//				rs.close();
+//				pstmt.close();
+//			} else {
+//				// Falls schon eine ID vorhanden ist, mache ein Update...
+//				String updateSQL = "UPDATE estate_agents SET name = ?, address = ?, login = ?, password = ? WHERE agent_id = ?";
+//				PreparedStatement pstmt = con.prepareStatement(updateSQL);
+//
+//				// Setze Anfrage Parameter
+//				pstmt.setString(1, getName());
+//				pstmt.setString(2, getAddress());
+//				pstmt.setString(3, getLogin());
+//				pstmt.setString(4, getPassword());
+//				pstmt.setInt(5, getId());
+//				pstmt.executeUpdate();
+//
+//				pstmt.close();
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

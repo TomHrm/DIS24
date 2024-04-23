@@ -40,15 +40,19 @@ public class House extends Estate {
 		Connection con = DbConnectionManager.getInstance().getConnection();
 
 		try {
-			delete();
-
-			String deleteSQL = "DELETE FROM houses WHERE houses = ?";
+			String deleteSQL = "DELETE FROM estates WHERE estate_id = ?";
 			PreparedStatement pstmt = con.prepareStatement(deleteSQL);
 			pstmt.setInt(1, getId());
-
-			// Führe Anfrage aus
 			pstmt.executeUpdate();
 			pstmt.close();
+
+			String deleteSQLHouse = "DELETE FROM houses WHERE estate_id = ?";
+			PreparedStatement pstmtHouse = con.prepareStatement(deleteSQLHouse);
+			pstmtHouse.setInt(1, getId());
+
+			// Führe Anfrage aus
+			pstmtHouse.executeUpdate();
+			pstmtHouse.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -58,34 +62,37 @@ public class House extends Estate {
 	// TODO:
 	/**
 	 * Lädt einen Makler aus der Datenbank
-	 * @param estateId ID des zu ladenden Maklers
+	 * @param houseId ID des zu ladenden Maklers
 	 * @return Makler-Instanz
 	 */
-	public static Estate load(int estateId) {
+	public static Estate load(int houseId) {
 		try {
 			// Hole Verbindung
 			Connection con = DbConnectionManager.getInstance().getConnection();
 
 			// Erzeuge Anfrage
-			String selectSQL = "SELECT * FROM estate_agents WHERE agent_id = ?";
+			String selectSQL = "SELECT * FROM houses JOIN estates ON houses.estate_id = estates.estates_id WHERE estate_id = ?";
 			PreparedStatement pstmt = con.prepareStatement(selectSQL);
-			pstmt.setInt(1, estateId);
+			pstmt.setInt(1, houseId);
 
 			// Führe Anfrage aus
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
-				Estate es = new Estate();
-				es.setId(estateId);
-				es.setName(rs.getString("name"));
-				es.setMaklerId(rs.getInt("agent_id"));
-				es.setPostalCode(rs.getString("postal_code"));
-				es.setCity(rs.getString("city"));
-				es.setStreet(rs.getString("street"));
-				es.setStreetNumber(rs.getString("street_number"));
+				House house = new House();
+				house.setId(houseId);
+				house.setName(rs.getString("name"));
+				house.setAgent_id(rs.getInt("agent_id"));
+				house.setPostalCode(rs.getString("postal_code"));
+				house.setCity(rs.getString("city"));
+				house.setStreet(rs.getString("street"));
+				house.setStreetNumber(rs.getString("street_number"));
+				house.setFloors(rs.getInt("floors"));
+				house.setPrice(rs.getDouble("price"));
+				house.setGarden(rs.getBoolean("garden"));
 
 				rs.close();
 				pstmt.close();
-				return es;
+				return house;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -108,38 +115,71 @@ public class House extends Estate {
 			if (getId() == -1) {
 				// Achtung, hier wird noch ein Parameter mitgegeben,
 				// damit spC$ter generierte IDs zurC<ckgeliefert werden!
-				String insertSQL = "INSERT INTO estates(name, address, agent_id) VALUES (?, ?, ?, ?)";
+				String insertSQL = "INSERT INTO estates(name, agent_id, postal_code, city, street, street_number, square_area) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 				PreparedStatement pstmt = con.prepareStatement(insertSQL,
 					Statement.RETURN_GENERATED_KEYS);
 
 				// Setze Anfrageparameter und fC<hre Anfrage aus
 				pstmt.setString(1, getName());
-
+				pstmt.setInt(2, getAgent_id());
+				pstmt.setString(3, getPostalCode());
+				pstmt.setString(4, getCity());
+				pstmt.setString(5, getStreet());
+				pstmt.setString(6, getStreetNumber());
+				pstmt.setInt(7, getSquareArea());
 				pstmt.executeUpdate();
-
 				// Hole die Id des engefC<gten Datensatzes
 				ResultSet rs = pstmt.getGeneratedKeys();
 				if (rs.next()) {
 					setId(rs.getInt(1));
 				}
+				rs.close();
+				pstmt.close();
 
+				String insertSQLHouse = "INSERT INTO estates(estate_id, floors, price, garden) VALUES (?, ?, ?, ?)";
+
+				PreparedStatement pstmtHouse = con.prepareStatement(insertSQLHouse,
+						Statement.RETURN_GENERATED_KEYS);
+
+				// Setze Anfrageparameter und fC<hre Anfrage aus
+				pstmtHouse.setInt(1, getId());
+				pstmtHouse.setInt(2, getFloors());
+				pstmtHouse.setDouble(3, getPrice());
+				pstmtHouse.setBoolean(4, getGarden());
+
+				pstmtHouse.executeUpdate();
 				rs.close();
 				pstmt.close();
 			} else {
 				// Falls schon eine ID vorhanden ist, mache ein Update...
-				String updateSQL = "UPDATE estate_agents SET name = ?, address = ?, login = ?, password = ? WHERE agent_id = ?";
+				String updateSQL = "UPDATE estates SET name = ?, agent_id = ?, postal_code = ?, city = ?, street = ?, street_number = ?, square_area = ? WHERE estate_id = ?";
 				PreparedStatement pstmt = con.prepareStatement(updateSQL);
 
 				// Setze Anfrage Parameter
 				pstmt.setString(1, getName());
-				pstmt.setString(2, getAddress());
-				pstmt.setString(3, getLogin());
-				pstmt.setString(4, getPassword());
-				pstmt.setInt(5, getId());
+				pstmt.setInt(2, getAgent_id());
+				pstmt.setString(3, getPostalCode());
+				pstmt.setString(4, getCity());
+				pstmt.setString(5, getStreet());
+				pstmt.setString(6, getStreetNumber());
+				pstmt.setInt(7, getSquareArea());
+				pstmt.setInt(8, getId());
 				pstmt.executeUpdate();
 
 				pstmt.close();
+
+				String updateSQLHouse = "UPDATE estates SET floors = ?, price = ?, garden = ? WHERE estate_id = ?";
+				PreparedStatement pstmtHouse = con.prepareStatement(updateSQLHouse);
+
+				// Setze Anfrage Parameter
+				pstmtHouse.setInt(1, getFloors());
+				pstmtHouse.setDouble(2, getPrice());
+				pstmtHouse.setBoolean(3, getGarden());
+				pstmtHouse.setInt(4, getId());
+				pstmtHouse.executeUpdate();
+
+				pstmtHouse.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
