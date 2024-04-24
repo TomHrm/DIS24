@@ -171,7 +171,6 @@ public class Main {
 			case BACK:
 				showMainMenu();
 				return;
-
 			}
 		}
 	}
@@ -180,16 +179,16 @@ public class Main {
 	 * Zeigt das Vertragsverwaltungsmenü
 	 */
 	public static void showContractMenu() {
-		final int CREATE_PERSON = 0;
-		final int NEW_SALE_CONTRACT = 1;
-		final int NEW_RENT_CONTRACT = 2;
-		final int SEE_ALL_CONTRACTS = 3;
-		final int BACK = 4;
+		final int CREATE_PERSON = 1;
+		final int NEW_SALE_CONTRACT = 2;
+		final int NEW_RENT_CONTRACT = 3;
+		final int SEE_ALL_CONTRACTS = 4;
+		final int BACK = 5;
 		Menu contracteMenu = new Menu("Contract-Verwaltung");
-		contracteMenu.addEntry("Neue Person erstellen", 0);
-		contracteMenu.addEntry("Neuer Verkaufs Vertrag", 1);
-		contracteMenu.addEntry("Neuer Mietvertrag", 2);
-		contracteMenu.addEntry("Alle Verträge anzeigen anzeigen", 3);
+		contracteMenu.addEntry("Neue Person erstellen", 1);
+		contracteMenu.addEntry("Neuer Verkaufs Vertrag", 2);
+		contracteMenu.addEntry("Neuer Mietvertrag", 3);
+		contracteMenu.addEntry("Alle Verträge anzeigen anzeigen", 4);
 		contracteMenu.addEntry("Zurück zum Hauptmenü", 5);
 
 		while(true) {
